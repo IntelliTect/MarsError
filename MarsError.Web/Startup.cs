@@ -39,7 +39,7 @@ namespace MarsError.Web
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionName = "DefaultConnection";
+            string connectionName = "WorkingConnection";
             string connString = Configuration.GetConnectionString(connectionName);
 
             // Add Entity Framework services to the services

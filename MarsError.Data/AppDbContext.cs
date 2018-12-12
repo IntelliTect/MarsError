@@ -1,19 +1,16 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Bogus;
+using IntelliTect.Coalesce;
+using MarsError.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using MarsError.Data.Models;
-using IntelliTect.Coalesce;
 
 namespace MarsError.Data
 {
     [Coalesce]
     public class AppDbContext : DbContext
     {
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-
         public AppDbContext()
         {
         }
@@ -22,27 +19,45 @@ namespace MarsError.Data
         {
         }
 
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+
+        public DbSet<Thing> Things { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             // Remove cascading deletes.
-            foreach (var relationship in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
+            foreach (IMutableForeignKey relationship in builder.Model.GetEntityTypes()
+                .SelectMany(e => e.GetForeignKeys()))
             {
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
         }
 
         /// <summary>
-        /// Migrates the database and sets up items that need to be set up from scratch.
+        ///     Migrates the database and sets up items that need to be set up from scratch.
         /// </summary>
         public void Initialize()
         {
             try
             {
-                this.Database.Migrate();
+                Database.Migrate();
+
+                if (false == Things.Any())
+                {
+                    var faker = new Faker<Thing>().Rules((f, thing) =>
+                    {
+                        thing.Bar = f.Hacker.Noun();
+                        thing.Foo = f.Hacker.Verb();
+                    });
+
+                    Things.AddRange(faker.Generate(2000));
+                }
             }
-            catch (InvalidOperationException e) when (e.Message == "No service for type 'Microsoft.EntityFrameworkCore.Migrations.IMigrator' has been registered.")
+            catch (InvalidOperationException e) when (e.Message ==
+                                                      "No service for type 'Microsoft.EntityFrameworkCore.Migrations.IMigrator' has been registered."
+            )
             {
                 // this exception is expected when using an InMemory database
             }

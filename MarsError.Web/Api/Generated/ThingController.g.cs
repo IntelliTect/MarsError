@@ -20,74 +20,74 @@ using System.Threading.Tasks;
 
 namespace MarsError.Web.Api
 {
-    [Route("api/ApplicationUser")]
+    [Route("api/Thing")]
     [Authorize]
     [ServiceFilter(typeof(IApiActionFilter))]
-    public partial class ApplicationUserController
-        : BaseApiController<MarsError.Data.Models.ApplicationUser, ApplicationUserDtoGen, MarsError.Data.AppDbContext>
+    public partial class ThingController
+        : BaseApiController<MarsError.Data.Models.Thing, ThingDtoGen, MarsError.Data.AppDbContext>
     {
-        public ApplicationUserController(MarsError.Data.AppDbContext db) : base(db)
+        public ThingController(MarsError.Data.AppDbContext db) : base(db)
         {
-            GeneratedForClassViewModel = ReflectionRepository.Global.GetClassViewModel<MarsError.Data.Models.ApplicationUser>();
+            GeneratedForClassViewModel = ReflectionRepository.Global.GetClassViewModel<MarsError.Data.Models.Thing>();
         }
 
         [HttpGet("get/{id}")]
         [Authorize]
-        public virtual Task<ItemResult<ApplicationUserDtoGen>> Get(
-            int id,
+        public virtual Task<ItemResult<ThingDtoGen>> Get(
+            long id,
             DataSourceParameters parameters,
-            IDataSource<MarsError.Data.Models.ApplicationUser> dataSource)
+            IDataSource<MarsError.Data.Models.Thing> dataSource)
             => GetImplementation(id, parameters, dataSource);
 
         [HttpGet("list")]
         [Authorize]
-        public virtual Task<ListResult<ApplicationUserDtoGen>> List(
+        public virtual Task<ListResult<ThingDtoGen>> List(
             ListParameters parameters,
-            IDataSource<MarsError.Data.Models.ApplicationUser> dataSource)
+            IDataSource<MarsError.Data.Models.Thing> dataSource)
             => ListImplementation(parameters, dataSource);
 
         [HttpGet("count")]
         [Authorize]
         public virtual Task<ItemResult<int>> Count(
             FilterParameters parameters,
-            IDataSource<MarsError.Data.Models.ApplicationUser> dataSource)
+            IDataSource<MarsError.Data.Models.Thing> dataSource)
             => CountImplementation(parameters, dataSource);
 
         [HttpPost("save")]
         [Authorize]
-        public virtual Task<ItemResult<ApplicationUserDtoGen>> Save(
-            ApplicationUserDtoGen dto,
+        public virtual Task<ItemResult<ThingDtoGen>> Save(
+            ThingDtoGen dto,
             [FromQuery] DataSourceParameters parameters,
-            IDataSource<MarsError.Data.Models.ApplicationUser> dataSource,
-            IBehaviors<MarsError.Data.Models.ApplicationUser> behaviors)
+            IDataSource<MarsError.Data.Models.Thing> dataSource,
+            IBehaviors<MarsError.Data.Models.Thing> behaviors)
             => SaveImplementation(dto, parameters, dataSource, behaviors);
 
         [HttpPost("delete/{id}")]
         [Authorize]
-        public virtual Task<ItemResult<ApplicationUserDtoGen>> Delete(
-            int id,
-            IBehaviors<MarsError.Data.Models.ApplicationUser> behaviors,
-            IDataSource<MarsError.Data.Models.ApplicationUser> dataSource)
+        public virtual Task<ItemResult<ThingDtoGen>> Delete(
+            long id,
+            IBehaviors<MarsError.Data.Models.Thing> behaviors,
+            IDataSource<MarsError.Data.Models.Thing> dataSource)
             => DeleteImplementation(id, new DataSourceParameters(), dataSource, behaviors);
 
         /// <summary>
-        /// Downloads CSV of ApplicationUserDtoGen
+        /// Downloads CSV of ThingDtoGen
         /// </summary>
         [HttpGet("csvDownload")]
         [Authorize]
         public virtual Task<FileResult> CsvDownload(
             ListParameters parameters,
-            IDataSource<MarsError.Data.Models.ApplicationUser> dataSource)
+            IDataSource<MarsError.Data.Models.Thing> dataSource)
             => CsvDownloadImplementation(parameters, dataSource);
 
         /// <summary>
-        /// Returns CSV text of ApplicationUserDtoGen
+        /// Returns CSV text of ThingDtoGen
         /// </summary>
         [HttpGet("csvText")]
         [Authorize]
         public virtual Task<string> CsvText(
             ListParameters parameters,
-            IDataSource<MarsError.Data.Models.ApplicationUser> dataSource)
+            IDataSource<MarsError.Data.Models.Thing> dataSource)
             => CsvTextImplementation(parameters, dataSource);
 
         /// <summary>
@@ -97,8 +97,8 @@ namespace MarsError.Web.Api
         [Authorize]
         public virtual Task<IEnumerable<ItemResult>> CsvUpload(
             IFormFile file,
-            IDataSource<MarsError.Data.Models.ApplicationUser> dataSource,
-            IBehaviors<MarsError.Data.Models.ApplicationUser> behaviors,
+            IDataSource<MarsError.Data.Models.Thing> dataSource,
+            IBehaviors<MarsError.Data.Models.Thing> behaviors,
             bool hasHeader = true)
             => CsvUploadImplementation(file, dataSource, behaviors, hasHeader);
 
@@ -109,8 +109,8 @@ namespace MarsError.Web.Api
         [Authorize]
         public virtual Task<IEnumerable<ItemResult>> CsvSave(
             string csv,
-            IDataSource<MarsError.Data.Models.ApplicationUser> dataSource,
-            IBehaviors<MarsError.Data.Models.ApplicationUser> behaviors,
+            IDataSource<MarsError.Data.Models.Thing> dataSource,
+            IBehaviors<MarsError.Data.Models.Thing> behaviors,
             bool hasHeader = true)
             => CsvSaveImplementation(csv, dataSource, behaviors, hasHeader);
 

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <OutputType>Exe</OutputType>
     <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
@@ -17,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.*" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="IntelliTect.Coalesce.Knockout" Version="$(CoalesceVersion)" />
   </ItemGroup>
 
