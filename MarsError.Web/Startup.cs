@@ -39,7 +39,8 @@ namespace MarsError.Web
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionName = "WorkingConnection";
+            //string connectionName = "WorkingConnection";
+            string connectionName = "BrokenConnection";
             string connString = Configuration.GetConnectionString(connectionName);
 
             // Add Entity Framework services to the services
@@ -48,8 +49,6 @@ namespace MarsError.Web
                 options.UseSqlServer(connString));
 
             services.AddCoalesce<AppDbContext>();
-
-            services.AddCors();
 
             services.AddMvc().AddJsonOptions(options =>
             {
@@ -75,7 +74,8 @@ namespace MarsError.Web
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-
+                app.UseDatabaseErrorPage();
+                loggerFactory.AddDebug();
 
                 // Dummy authentication for initial development.
                 // Replace this with ASP.NET Core Identity, Windows Authentication, or some other auth scheme.

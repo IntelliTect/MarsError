@@ -24,6 +24,9 @@ namespace MarsError.Data.Models
             [Coalesce]
             public string FooPart { get; set; }
 
+            [Coalesce]
+            public string BarPart { get; set; }
+
 
             public override IncludeTree GetIncludeTree(IQueryable<Thing> query, IDataSourceParameters parameters)
             {
@@ -42,6 +45,12 @@ namespace MarsError.Data.Models
                 {
                     sql.Add("[Foo] LIKE '%' + @FooPart + '%' ");
                     sqlParams.Add(new SqlParameter("FooPart", FooPart));
+                }
+
+                if (false == string.IsNullOrWhiteSpace(BarPart))
+                {
+                    sql.Add("[Bar] LIKE '%' + @BarPart + '%' ");
+                    sqlParams.Add(new SqlParameter("BarPart", BarPart));
                 }
 
                 return sql.Count == 1

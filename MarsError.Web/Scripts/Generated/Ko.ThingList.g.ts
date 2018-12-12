@@ -9,9 +9,11 @@ module ListViewModels {
         export class Default extends Coalesce.DataSource<ViewModels.Thing> { }
         export class FooSearchDataSource extends Coalesce.DataSource<ViewModels.Thing> {
             public fooPart: KnockoutObservable<string | null> = ko.observable(null);
+            public barPart: KnockoutObservable<string | null> = ko.observable(null);
             public saveToDto = () => {
                 var dto: any = {};
                 dto.fooPart = this.fooPart();
+                dto.barPart = this.barPart();
                 return dto;
             }
         }
