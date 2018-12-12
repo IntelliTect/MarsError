@@ -4,40 +4,30 @@
 }
 
 <div class="content" style="margin: 100px; margin-top: 0px">
-
-    <h1 class="thin" style="text-transform: lowercase; text-align: center">
-        welcome to your new application, @(User.Identity.Name)!
-    </h1>
-    <br />
-    <h3>Here are the next steps to get started with your new Coalesce application:</h3>
-    <ol>
-        <li>
-            Create your data model by adding classes to the Models folder in your data project, and adding DbSet properties on AppDbContext.
-        </li>
-        <li>
-            Create an EF migration by running
-            <code>dotnet ef migrations add MigrationName</code>
-            in your .Data project. The pages below will not work until you do so.
-        </li>
-        <li>
-            Implement a proper authentication mechanism in Startup.cs and remove the existing dummy authentication. Options include
-            <a href="https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity">Identity</a>
-            and Windows Authentication (enabled in the Debug tab of the properties of your Web project.)
-        </li>
-    </ol>
-    <h1 class="thin" style="text-transform: lowercase; text-align: center">
-        <small>
-            below you will find links to your coalesce-generated views.
-        </small>
-    </h1>
-    <br />
     <style>
-        .admin-container tbody  {
+
+        .admin-container tbody {
             font-size: 1.3em;
         }
 
         td, .admin-container div {
             padding: 3px 10px !important;
+        }
+
+            td div a {
+                display: block;
+            }
+
+        th.sortable-header {
+            cursor: pointer;
+        }
+
+            th.sortable-header:hover {
+                background-color: #e6e6e6
+            }
+
+        .table-view-header {
+            padding: 10px 15px;
         }
     </style>
     <div class="admin-container card">
@@ -50,27 +40,120 @@
                     </tr>
                 </thead>
                 <tbody>
-                @foreach (var vm in ReflectionRepository.Global.ApiBackedClasses.OrderBy(f => f.Name))
-                {
-                    <tr>
-                        <td>@vm.DisplayName</td>
-                        @if (vm.SecurityInfo.IsReadAllowed(User))
-                        {
-                            <td>
-                                <a asp-action="Table" asp-controller="@vm.Name" style="padding-right: 15px">Table</a>
-                            </td>
-                            <td>
-                                <a asp-action="Cards" asp-controller="@vm.Name" style="padding-right: 15px">Cards</a>
-                            </td>
-                        }
-                        else
-                        {
-                            <td colspan="2" class="thin">unauthorized</td>
-                        }
-                    </tr>
-                }
+                    @foreach (var vm in ReflectionRepository.Global.ApiBackedClasses.OrderBy(f => f.Name))
+                    {
+                        <tr>
+                            <td>@vm.DisplayName</td>
+                            @if (vm.SecurityInfo.IsReadAllowed(User))
+                            {
+                                <td>
+                                    <a asp-action="Table" asp-controller="@vm.Name" style="padding-right: 15px">Table</a>
+                                </td>
+                                <td>
+                                    <a asp-action="Cards" asp-controller="@vm.Name" style="padding-right: 15px">Cards</a>
+                                </td>
+                            }
+                            else
+                            {
+                                <td colspan="2" class="thin">unauthorized</td>
+                            }
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
     </div>
+    <div class="table-view obj-thing" data-bind="with: fooSearch">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3>Search Criteria</h3>
+            </div>
+            <div class="panel-body">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label" for="fooPart">Foo Part</label>
+                        <input type="text" class="form-control" id="fooPart" placeholder="cal" data-bind="textInput: dataSource.fooPart">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label" for="buttons" data-bind="text: isLoading() ? 'Searching...' : 'Search'">Search</label>
+                        <div class="input-group btn-group" id="buttons" role="group">
+                            <button class="btn btn-primary" data-bind="click: $parent.search, disable: isLoading()">Go!</button>
+                            <button class="btn btn-warning" data-bind="click: $parent.reset">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-view-header">
+            <div class="clearfix">
+                <h1 style="display: inline-block">
+                    Thing Search
+                </h1>
+            </div>
+            <div class="clearfix">
+                <div style="display: inline-block; font-size: 1.1em; margin-right: 10px;">
+                    <i class="fa fa-arrow-circle-left" data-bind="enabled: previousPageEnabled() && !isLoading(), click: previousPage"></i>
+                    Page
+                    <input data-bind="value: page" style="width: 35px">
+                    of
+                    <span data-bind="text: pageCount"></span>
+                    <i class="fa fa-arrow-circle-right" data-bind="enabled: nextPageEnabled() && !isLoading(), click: nextPage"></i>
+                </div>
+                <select class="form-control" style="width: 100px; display: inline-block;" data-bind="value: pageSize">
+                    <option value="1">1</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="500">500</option>
+                    <option value="1000">1000</option>
+                </select>
+            </div>
+        </div>
+        <hr />
+        <div class="card table-view-body">
+            <div class="card-body">
+                <table class="table" data-bind="visible: !isLoading() && totalCount()" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th class="sortable-header" data-bind="click: function(){orderByToggle('Foo')}">
+                                Foo
+                                <i class="pull-right fa" data-bind="css:{'fa-caret-up': orderBy() == 'Foo', 'fa-caret-down': orderByDescending() == 'Foo'}"></i>
+                            </th>
+                            <th class="sortable-header" data-bind="click: function(){orderByToggle('Bar')}">
+                                Bar
+                                <i class="pull-right fa" data-bind="css:{'fa-caret-up': orderBy() == 'Bar', 'fa-caret-down': orderByDescending() == 'Bar'}"></i>
+                            </th>
+                            <th style="width: 1%">
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: items">
+                        <tr data-bind="css: {'btn-warning': errorMessage()}, attr: {id: thingId}">
+
+                            <td class="prop-foo">@(Knockout.DisplayFor<MarsError.Data.Models.Thing>(p => p.Foo, true))</td>
+                            <td class="prop-bar">@(Knockout.DisplayFor<MarsError.Data.Models.Thing>(p => p.Bar, true))</td>
+                            <td>
+                                <div class="form-control-static" data-bind="text: errorMessage"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="panel-body" data-bind="visible: isLoading()" style="display: none;">
+            <h3 style="width: 100%; text-align: center;">Loading...</h3>
+        </div>
+
+        <div class="panel-body" data-bind="visible: !totalCount() && !isLoading()" style="display: none;">
+            <h3 style="width: 100%; text-align: center;">No Results</h3>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/home.js" asp-append-version="true"></script>
+}

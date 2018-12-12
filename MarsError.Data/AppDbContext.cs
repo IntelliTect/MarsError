@@ -53,6 +53,7 @@ namespace MarsError.Data
                     });
 
                     Things.AddRange(faker.Generate(2000));
+                    SaveChanges();
                 }
             }
             catch (InvalidOperationException e) when (e.Message ==
