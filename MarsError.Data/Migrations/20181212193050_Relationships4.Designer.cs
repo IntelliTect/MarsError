@@ -3,14 +3,16 @@ using MarsError.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MarsError.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181212193050_Relationships4")]
+    partial class Relationships4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,6 +50,23 @@ namespace MarsError.Data.Migrations
                     b.ToTable("Kids");
                 });
 
+            modelBuilder.Entity("MarsError.Data.Models.Frobnitz", b =>
+                {
+                    b.Property<long>("FrobnitzId")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("ParentId");
+
+                    b.Property<string>("Review");
+
+                    b.HasKey("FrobnitzId");
+
+                    b.HasIndex("ParentId");
+
+                    b.ToTable("Frobs");
+                });
+
             modelBuilder.Entity("MarsError.Data.Models.Thing", b =>
                 {
                     b.Property<long>("ThingId")
@@ -67,6 +86,14 @@ namespace MarsError.Data.Migrations
                 {
                     b.HasOne("MarsError.Data.Models.Thing", "Parent")
                         .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("MarsError.Data.Models.Frobnitz", b =>
+                {
+                    b.HasOne("MarsError.Data.Models.Thing", "ParentThing")
+                        .WithMany("Frobnitzen")
                         .HasForeignKey("ParentId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });

@@ -3,14 +3,16 @@ using MarsError.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MarsError.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181212190057_Relationships")]
+    partial class Relationships
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,23 +33,6 @@ namespace MarsError.Data.Migrations
                     b.ToTable("ApplicationUsers");
                 });
 
-            modelBuilder.Entity("MarsError.Data.Models.Child", b =>
-                {
-                    b.Property<long>("ChildId")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name");
-
-                    b.Property<long>("ParentId");
-
-                    b.HasKey("ChildId");
-
-                    b.HasIndex("ParentId");
-
-                    b.ToTable("Kids");
-                });
-
             modelBuilder.Entity("MarsError.Data.Models.Thing", b =>
                 {
                     b.Property<long>("ThingId")
@@ -61,14 +46,6 @@ namespace MarsError.Data.Migrations
                     b.HasKey("ThingId");
 
                     b.ToTable("Things");
-                });
-
-            modelBuilder.Entity("MarsError.Data.Models.Child", b =>
-                {
-                    b.HasOne("MarsError.Data.Models.Thing", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 #pragma warning restore 612, 618
         }

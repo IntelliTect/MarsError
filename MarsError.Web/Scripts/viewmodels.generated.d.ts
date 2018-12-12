@@ -8,5 +8,7 @@
 /// <reference path="coalesce.dependencies.d.ts" />
 /// <reference path="Generated/Ko.ApplicationUser.g.ts" />
 /// <reference path="Generated/Ko.ApplicationUserList.g.ts" />
+/// <reference path="Generated/Ko.Child.g.ts" />
+/// <reference path="Generated/Ko.ChildList.g.ts" />
 /// <reference path="Generated/Ko.Thing.g.ts" />
 /// <reference path="Generated/Ko.ThingList.g.ts" />

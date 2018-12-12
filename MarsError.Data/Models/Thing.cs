@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.SqlClient;
 using System.Linq;
 using IntelliTect.Coalesce;
@@ -13,6 +14,9 @@ namespace MarsError.Data.Models
         public string Foo { get; set; }
 
         public string Bar { get; set; }
+
+        [InverseProperty(nameof(Child.Parent))]
+        public ICollection<Child> Children { get; set; }
 
 
         public class FooSearchDataSource : StandardDataSource<Thing, AppDbContext>

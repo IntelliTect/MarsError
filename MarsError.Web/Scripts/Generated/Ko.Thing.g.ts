@@ -27,9 +27,33 @@ module ViewModels {
         public thingId: KnockoutObservable<number | null> = ko.observable(null);
         public foo: KnockoutObservable<string | null> = ko.observable(null);
         public bar: KnockoutObservable<string | null> = ko.observable(null);
+        public children: KnockoutObservableArray<ViewModels.Child> = ko.observableArray([]);
         
         
         
+        /** Add object to children */
+        public addToChildren = (autoSave?: boolean | null): Child => {
+            var newItem = new Child();
+            if (typeof(autoSave) == 'boolean'){
+                newItem.coalesceConfig.autoSaveEnabled(autoSave);
+            }
+            newItem.parent = this;
+            newItem.parentCollection = this.children;
+            newItem.isExpanded(true);
+            newItem.parentId(this.thingId());
+            this.children.push(newItem);
+            return newItem;
+        };
+        
+        /** ListViewModel for Children. Allows for loading subsets of data. */
+        public childrenList: (loadImmediate?: boolean) => ListViewModels.ChildList;
+        
+        
+        /** Url for a table view of all members of collection Children for the current object. */
+        public childrenListUrl: KnockoutComputed<string> = ko.computed(
+            () => this.coalesceConfig.baseViewUrl() + '/Child/Table?filter.parentId=' + this.thingId(),
+            null, { deferEvaluation: true }
+        );
         
         
         
@@ -48,6 +72,10 @@ module ViewModels {
             this.myId = data.thingId;
             this.thingId(data.thingId);
             // Load the lists of other objects
+            if (data.children != null) {
+                // Merge the incoming array
+                Coalesce.KnockoutUtilities.RebuildArray(this.children, data.children, 'childId', Child, this, allowCollectionDeletes);
+            }
             
             // The rest of the objects are loaded now.
             this.foo(data.foo);
@@ -95,6 +123,22 @@ module ViewModels {
             
             
             
+            // List Object model for Children. Allows for loading subsets of data.
+            var _childrenList: ListViewModels.ChildList;
+            this.childrenList = function(loadImmediate = true) {
+                if (!_childrenList) {
+                    _childrenList = new ListViewModels.ChildList();
+                    if (loadImmediate) loadChildrenList();
+                    self.thingId.subscribe(loadChildrenList)
+                }
+                return _childrenList;
+            }
+            function loadChildrenList() {
+                if (self.thingId()) {
+                    _childrenList.queryString = "filter.ParentId=" + self.thingId();
+                    _childrenList.load();
+                }
+            }
             
             
             

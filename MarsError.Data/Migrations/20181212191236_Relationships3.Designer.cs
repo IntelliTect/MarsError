@@ -3,14 +3,16 @@ using MarsError.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace MarsError.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181212191236_Relationships3")]
+    partial class Relationships3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,7 +60,11 @@ namespace MarsError.Data.Migrations
 
                     b.Property<string>("Foo");
 
+                    b.Property<long>("ParentId");
+
                     b.HasKey("ThingId");
+
+                    b.HasIndex("ParentId");
 
                     b.ToTable("Things");
                 });
@@ -67,6 +73,14 @@ namespace MarsError.Data.Migrations
                 {
                     b.HasOne("MarsError.Data.Models.Thing", "Parent")
                         .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("MarsError.Data.Models.Thing", b =>
+                {
+                    b.HasOne("MarsError.Data.Models.Child", "Parent")
+                        .WithMany("Things")
                         .HasForeignKey("ParentId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });

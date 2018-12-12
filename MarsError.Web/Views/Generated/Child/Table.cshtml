@@ -16,12 +16,12 @@
         padding: 10px 15px;
     }
 </style>
-<div class="table-view obj-thing">
+<div class="table-view obj-child">
     <div class="table-view-header">
         <div class="clearfix">
             <h1 style="display: inline-block">
-                Thing List
-                <span style="font-size: .5em; padding-left: 20px;"><a href="~/Thing/Docs">API Docs</a></span>
+                Child List
+                <span style="font-size: .5em; padding-left: 20px;"><a href="~/Child/Docs">API Docs</a></span>
             </h1>
         </div>
         <div class="clearfix">
@@ -44,15 +44,15 @@
             </select>
             <input class="form-control pull-right" style="width: 250px; margin-left: 20px" data-bind="textInput: search" placeholder="Search" />
             <div class="btn-group pull-right">
-                <a href="~/Thing/CreateEdit?@(ViewBag.Query)" role="button" class="btn btn-sm btn-default "><i class="fa fa-plus"></i> Create</a>
+                <a href="~/Child/CreateEdit?@(ViewBag.Query)" role="button" class="btn btn-sm btn-default "><i class="fa fa-plus"></i> Create</a>
                 <button data-bind="click:load" class="btn btn-sm btn-default "><i class="fa fa-refresh"></i> Refresh</button>
                 @if (ViewBag.Editable)
                 {
-                    <a href="~/Thing/Table?@(ViewBag.Query)" role="button" class="btn btn-sm btn-default "><i class="fa fa-lock"></i> Make Read-only</a>
+                    <a href="~/Child/Table?@(ViewBag.Query)" role="button" class="btn btn-sm btn-default "><i class="fa fa-lock"></i> Make Read-only</a>
                 }
                 else
                 {
-                    <a href="~/Thing/TableEdit?@ViewBag.Query" role="button" class="btn btn-sm btn-default "><i class="fa fa-pencil"></i> Make Editable</a>
+                    <a href="~/Child/TableEdit?@ViewBag.Query" role="button" class="btn btn-sm btn-default "><i class="fa fa-pencil"></i> Make Editable</a>
                 }
                 <a href="#" role="button" class="btn btn-sm btn-default " data-bind="attr:{href: downloadAllCsvUrl}"><i class="fa fa-download"></i> CSV</a>
                 <button role="button" class="btn btn-sm btn-default " data-bind="click: csvUploadUi"><i class="fa fa-upload"></i> CSV</button>
@@ -65,32 +65,29 @@
             <table class="table @(ViewBag.Editable ? "editable" : "" )">
                 <thead>
                     <tr>
-                        <th class="sortable-header" data-bind="click: function(){orderByToggle('Foo')}">
-                            Foo
-                            <i class="pull-right fa" data-bind="css:{'fa-caret-up': orderBy() == 'Foo', 'fa-caret-down': orderByDescending() == 'Foo'}"></i>
+                        <th class="sortable-header" data-bind="click: function(){orderByToggle('Name')}">
+                            Name
+                            <i class="pull-right fa" data-bind="css:{'fa-caret-up': orderBy() == 'Name', 'fa-caret-down': orderByDescending() == 'Name'}"></i>
                         </th>
-                        <th class="sortable-header" data-bind="click: function(){orderByToggle('Bar')}">
-                            Bar
-                            <i class="pull-right fa" data-bind="css:{'fa-caret-up': orderBy() == 'Bar', 'fa-caret-down': orderByDescending() == 'Bar'}"></i>
+                        <th class="sortable-header" data-bind="click: function(){orderByToggle('Parent')}">
+                            Parent
+                            <i class="pull-right fa" data-bind="css:{'fa-caret-up': orderBy() == 'Parent', 'fa-caret-down': orderByDescending() == 'Parent'}"></i>
                         </th>
-                        <th>Children</th>
                         <th style="width: 1%">
                         </th>
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: items">
-                    <tr data-bind="css: {'btn-warning': errorMessage()}, attr: {id: thingId}">
+                    <tr data-bind="css: {'btn-warning': errorMessage()}, attr: {id: childId}">
                         @if (@ViewBag.Editable)
                         {
-                            <td class="prop-foo">@(Knockout.InputFor<MarsError.Data.Models.Thing>(p => p.Foo))</td>
-                            <td class="prop-bar">@(Knockout.InputFor<MarsError.Data.Models.Thing>(p => p.Bar))</td>
-                            <td class="prop-children"><a data-bind='attr: {href: childrenListUrl}, text: children().length + " - Edit"' class='btn btn-default btn-sm'></a></td>
+                            <td class="prop-name">@(Knockout.InputFor<MarsError.Data.Models.Child>(p => p.Name))</td>
+                            <td class="prop-parent">@(Knockout.SelectForObject<MarsError.Data.Models.Child>(p => p.Parent))</td>
                         }
                         else
                         {
-                            <td class="prop-foo">@(Knockout.DisplayFor<MarsError.Data.Models.Thing>(p => p.Foo, true))</td>
-                            <td class="prop-bar">@(Knockout.DisplayFor<MarsError.Data.Models.Thing>(p => p.Bar, true))</td>
-                            <td class="prop-children"><a data-bind='attr: {href: childrenListUrl}, text: children().length + " - Edit"' class='btn btn-default btn-sm'></a></td>
+                            <td class="prop-name">@(Knockout.DisplayFor<MarsError.Data.Models.Child>(p => p.Name, true))</td>
+                            <td class="prop-parent">@(Knockout.DisplayFor<MarsError.Data.Models.Child>(p => p.Parent, true))</td>
                         }
                         <td>
                             <!-- Editor buttons -->
@@ -119,35 +116,35 @@
         {
             @:Coalesce.GlobalConfiguration.viewModel.setupValidationAutomatically(false);
         }
-        var thingList = new ListViewModels.ThingList();
+        var childList = new ListViewModels.ChildList();
         
         // Set up parent info based on the URL.
         @if (ViewBag.Query != null)
         {
-            @:thingList.queryString = "@(ViewBag.Query)";
+            @:childList.queryString = "@(ViewBag.Query)";
         }
         
         // Save and restore values from the URL:
         var urlVariables = ['page', 'pageSize', 'search', 'orderBy', 'orderByDescending'];
         $.each(urlVariables, function(){
             var param = Coalesce.Utilities.GetUrlParameter(this);
-            if (param) {thingList[this](param);}
+            if (param) {childList[this](param);}
         })
-        thingList.isLoading.subscribe(function(){
+        childList.isLoading.subscribe(function(){
             var newUrl = window.location.href;
         
             $.each(urlVariables, function(){
-                var param = thingList[this]();
+                var param = childList[this]();
                 newUrl = Coalesce.Utilities.SetUrlParameter(newUrl, this, param);
             })
             history.replaceState(null, document.title, newUrl);
         });
         
-        thingList.isSavingAutomatically = false;
-        ko.applyBindings(thingList);
-        thingList.isSavingAutomatically = true;
+        childList.isSavingAutomatically = false;
+        ko.applyBindings(childList);
+        childList.isSavingAutomatically = true;
         
-        thingList.includes = "ThingListGen";
-        thingList.load();
+        childList.includes = "ChildListGen";
+        childList.load();
     </script>
 }

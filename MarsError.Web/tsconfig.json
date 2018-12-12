@@ -9,6 +9,6 @@
     "module": "system"
   },
   "include": [
-    "Scripts"
+    "Scripts", "../MarsError.Data/Models/Frobnitz.cs"
   ]
 }

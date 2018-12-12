@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Bogus;
 using IntelliTect.Coalesce;
@@ -11,17 +12,16 @@ namespace MarsError.Data
     [Coalesce]
     public class AppDbContext : DbContext
     {
-        public AppDbContext()
-        {
-        }
-
         public AppDbContext(DbContextOptions options) : base(options)
         {
         }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
+        public DbSet<Child> Kids { get; set; }
+
         public DbSet<Thing> Things { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -44,17 +44,32 @@ namespace MarsError.Data
             {
                 Database.Migrate();
 
+                const int count = 2000;
+
+                List<Thing> things = new List<Thing>();
                 if (false == Things.Any())
                 {
-                    var faker = new Faker<Thing>().Rules((f, thing) =>
+                    Faker<Thing> faker = new Faker<Thing>().Rules((f, thing) =>
                     {
                         thing.Bar = f.Hacker.Noun();
                         thing.Foo = f.Hacker.Verb();
                     });
 
-                    Things.AddRange(faker.Generate(2000));
-                    SaveChanges();
+                    things = faker.Generate(count).ToList();
+                    Things.AddRange(things);
                 }
+
+                if (false == Kids.Any())
+                {
+                    Faker<Child> faker = new Faker<Child>().Rules((f, child) =>
+                    {
+                        child.Name = f.Person.FullName;
+                        child.Parent = f.PickRandom(things);
+                    });
+                    Kids.AddRange(faker.Generate(count));
+                }
+
+                SaveChanges();
             }
             catch (InvalidOperationException e) when (e.Message ==
                                                       "No service for type 'Microsoft.EntityFrameworkCore.Migrations.IMigrator' has been registered."

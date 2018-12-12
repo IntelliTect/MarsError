@@ -17,6 +17,7 @@ namespace MarsError.Web.Models
         public long? ThingId { get; set; }
         public string Foo { get; set; }
         public string Bar { get; set; }
+        public System.Collections.Generic.ICollection<MarsError.Web.Models.ChildDtoGen> Children { get; set; }
 
         /// <summary>
         /// Map from the domain object to the properties of the current DTO instance.
@@ -31,6 +32,18 @@ namespace MarsError.Web.Models
             this.ThingId = obj.ThingId;
             this.Foo = obj.Foo;
             this.Bar = obj.Bar;
+            var propValChildren = obj.Children;
+            if (propValChildren != null && (tree == null || tree[nameof(this.Children)] != null))
+            {
+                this.Children = propValChildren
+                    .AsQueryable().OrderBy("Name ASC").AsEnumerable<MarsError.Data.Models.Child>()
+                    .Select(f => f.MapToDto<MarsError.Data.Models.Child, ChildDtoGen>(context, tree?[nameof(this.Children)])).ToList();
+            }
+            else if (propValChildren == null && tree?[nameof(this.Children)] != null)
+            {
+                this.Children = new ChildDtoGen[0];
+            }
+
         }
 
         /// <summary>
