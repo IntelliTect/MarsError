@@ -1,0 +1,8 @@
+{
+  "webProject": {
+    "projectFile": "./MarsError.Web/MarsError.Web.csproj"
+  },
+  "dataProject": {
+    "projectFile": "./MarsError.Data/MarsError.Data.csproj"
+  }
+}
